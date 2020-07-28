@@ -32,11 +32,12 @@ public class UserController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Creates user")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Success", response = UserRqDTO.class),
+            @ApiResponse(code = 201, message = "Created", response = UserRqDTO.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = ErrorRsDTO.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = ErrorRsDTO.class)
     })
     public ResponseEntity<UserRsDTO> createUser(@RequestBody final UserRqDTO user) {
-        return new ResponseEntity<>(this.userService.createUser(user), HttpStatus.OK);
+        return new ResponseEntity<>(this.userService.createUser(user), HttpStatus.CREATED);
     }
 
 }

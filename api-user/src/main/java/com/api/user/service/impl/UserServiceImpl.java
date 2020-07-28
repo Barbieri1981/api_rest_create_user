@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Autowired
-    private UserServiceImpl(final UserRqConverter userRqConverter,
+    public UserServiceImpl(final UserRqConverter userRqConverter,
                             final UserRepository userRepository,
                             final UserPhoneRqConverter userPhoneRqConverter,
                             final UserPhoneRepository userPhoneRepository,
