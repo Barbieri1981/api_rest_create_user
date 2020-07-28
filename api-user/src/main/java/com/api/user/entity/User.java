@@ -40,6 +40,8 @@ public class User {
     private Date lastLogin;
     @Column(name = "ACTIVE")
     private boolean isActive;
+    @Column(name = "USER_TOKEN")
+    private String userToken;
 
     public User() {
     }
@@ -113,5 +115,13 @@ public class User {
 
     public void setActive(final boolean active) {
         isActive = active;
+    }
+
+    public String getUserToken() {
+        return this.userToken;
+    }
+
+    public void setUserToken(final String userToken) {
+        this.userToken = userToken;
     }
 }

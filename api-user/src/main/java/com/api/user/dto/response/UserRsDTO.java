@@ -14,16 +14,18 @@ public class UserRsDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm", timezone = "GMT-3")
     private Date lastLogin;
     private boolean isActive;
+    private String userToken;
 
     public UserRsDTO() {
     }
 
-    public UserRsDTO(final Long id, final Date created, final Date modified, final Date lastLogin, final boolean isActive) {
+    public UserRsDTO(final Long id, final Date created, final Date modified, final Date lastLogin, final boolean isActive, final String userToken) {
         this.id = id;
         this.created = created;
         this.modified = modified;
         this.lastLogin = lastLogin;
         this.isActive = isActive;
+        this.userToken = userToken;
     }
 
     public Long getId() {
@@ -66,6 +68,14 @@ public class UserRsDTO {
         isActive = active;
     }
 
+    public String getUserToken() {
+        return this.userToken;
+    }
+
+    public void setUserToken(final String userToken) {
+        this.userToken = userToken;
+    }
+
     @Override
     public String toString() {
         return "UserRsDTO{" +
@@ -74,6 +84,7 @@ public class UserRsDTO {
                 ", modified=" + modified +
                 ", lastLogin=" + lastLogin +
                 ", isActive=" + isActive +
+                ", userToken='" + userToken + '\'' +
                 '}';
     }
 }

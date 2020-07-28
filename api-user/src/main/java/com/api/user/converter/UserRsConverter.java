@@ -14,7 +14,8 @@ public class UserRsConverter implements Converter<User, UserRsDTO> {
                 source.getCreateDate(),
                 source.getModifiedDate(),
                 source.getLastLogin(),
-                source.isActive());
+                source.isActive(),
+                source.getUserToken());
 
     }
 }
