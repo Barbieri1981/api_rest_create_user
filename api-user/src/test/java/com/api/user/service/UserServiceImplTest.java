@@ -18,18 +18,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-import static javafx.beans.binding.Bindings.when;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
@@ -50,8 +50,8 @@ public class UserServiceImplTest {
     private TokenConverter tokenConverter;
 
     private static final String NAME = "testName";
-    private static final String  EMAIL = "testEmail@dominio.com";
-    private static final String PASSWORD = "123PqrstadF";
+    private static final String EMAIL = "testEmail@dominio.com";
+    private static final String PASSWORD = "asdASD123";
 
 
     @Before
@@ -87,10 +87,77 @@ public class UserServiceImplTest {
     }
 
     @Test
+    public void whenCreateUserIsCalledAndPasswordHasNoNumbersThenThrowException () {
+        final UserRqDTO request = createUserRq();
+        request.setPassword("passwordWithOneNumber");
+        try {
+            this.userService.createUser(request);
+        } catch (UserException e) {
+            Assert.assertEquals("Password has an invalid format", e.getMessage());
+        }
+    }
+
+    @Test
+    public void whenCreateUserIsCalledAndPasswordHasNoUpperCaseThenThrowException () {
+        final UserRqDTO request = createUserRq();
+        request.setPassword("password1234");
+        try {
+            this.userService.createUser(request);
+        } catch (UserException e) {
+            Assert.assertEquals("Password has an invalid format", e.getMessage());
+        }
+    }
+
+    @Test
+    public void whenCreateUserIsCalledAndPasswordHasNoLowerCaseThenThrowException () {
+        final UserRqDTO request = createUserRq();
+        request.setPassword("PASSWORD1234");
+        try {
+            this.userService.createUser(request);
+        } catch (UserException e) {
+            Assert.assertEquals("Password has an invalid format", e.getMessage());
+        }
+    }
+
+    @Test
+    public void whenCreateUserIsCalledAndPasswordHasOnlyOneNumberThenThrowException () {
+        final UserRqDTO request = createUserRq();
+        request.setPassword("Password1");
+        try {
+            this.userService.createUser(request);
+        } catch (UserException e) {
+            Assert.assertEquals("Password has an invalid format", e.getMessage());
+        }
+    }
+
+    @Test
+    public void whenCreateUserIsCalledAndPasswordHasLessThanEightCharactersThenThrowException () {
+        final UserRqDTO request = createUserRq();
+        request.setPassword("aA1a1");
+        try {
+            this.userService.createUser(request);
+        } catch (UserException e) {
+            Assert.assertEquals("Password has an invalid format", e.getMessage());
+        }
+    }
+
+    @Test
+    public void whenCreateUserIsCalledAndEmailExistsThenThrowException () {
+        final UserRqDTO request = createUserRq();
+        final Optional<User> user = Optional.of(createUser());
+        when(this.userRepository.findByEmail(any())).thenReturn(user);
+        try {
+            this.userService.createUser(request);
+        } catch (UserException e) {
+            Assert.assertEquals("Email exists", e.getMessage());
+        }
+    }
+
+    @Test
     public void whenCreateUserIsCalledAndDataIsValidThenReturnData () {
         final UserRqDTO request = createUserRq();
         final User user = createUser();
-        Mockito.when(this.userRepository.save(any(User.class))).thenReturn(user);
+        when(this.userRepository.save(any(User.class))).thenReturn(user);
 
         final UserRsDTO result = this.userService.createUser(request);
 

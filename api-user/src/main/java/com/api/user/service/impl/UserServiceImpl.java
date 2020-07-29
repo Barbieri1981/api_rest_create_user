@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -38,11 +39,11 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     public UserServiceImpl(final UserRqConverter userRqConverter,
-                            final UserRepository userRepository,
-                            final UserPhoneRqConverter userPhoneRqConverter,
-                            final UserPhoneRepository userPhoneRepository,
-                            final UserRsConverter userRsConverter,
-                            final TokenConverter tokenConverter) {
+                           final UserRepository userRepository,
+                           final UserPhoneRqConverter userPhoneRqConverter,
+                           final UserPhoneRepository userPhoneRepository,
+                           final UserRsConverter userRsConverter,
+                           final TokenConverter tokenConverter) {
         this.userRqConverter = userRqConverter;
         this.userRepository = userRepository;
         this.userPhoneRqConverter = userPhoneRqConverter;
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
         List<UserPhone> phones = userRq.getPhones().stream().map(e -> this.userPhoneRqConverter.convert(e))
                 .collect(Collectors.toList());
 
-        phones.forEach( phone -> {
+        phones.forEach(phone -> {
             phone.setUserId(user.getId());
             this.userPhoneRepository.save(phone);
         });
@@ -80,11 +81,13 @@ public class UserServiceImpl implements UserService {
 
     private void validatePassword(final String password) {
 
-        final Pattern passwrodRegExp = Pattern.compile("^(?=.*[0-9])"
-                + "(?=.*[a-z])(?=.*[A-Z])"
-                + "(?=\\S+$).{8,20}$");
+        final Pattern passwordRegExp = Pattern.compile("^(?=.{8,}$)"
+                + "(?=.*[A-Z])"
+                + "(?=.*?[a-z])"
+                + "(?=(?:.*?[0-9]){2}).*$");
 
-        final Matcher matchPasswordRegExp = passwrodRegExp.matcher(password);
+
+        final Matcher matchPasswordRegExp = passwordRegExp.matcher(password);
 
         if (!matchPasswordRegExp.find()) {
             throw new UserException("Password has an invalid format", ErrorType.INVALID_PASSWORD_FORMAT, HttpStatus.BAD_REQUEST.value());
@@ -103,6 +106,11 @@ public class UserServiceImpl implements UserService {
 
         if (!matchEmailRegExp.find()) {
             throw new UserException("Email has an invalid format", ErrorType.INVALID_MAIL_FORMAT, HttpStatus.BAD_REQUEST.value());
+        }
+
+        Optional<User> result = this.userRepository.findByEmail(email);
+        if (result.isPresent()) {
+            throw new UserException("Email exists", ErrorType.EMAIL_EXISTS, HttpStatus.BAD_REQUEST.value());
         }
 
     }

@@ -4,7 +4,8 @@ public enum ErrorType {
 
     INTERNAL_SERVER_ERROR("user_api_001", "Internal error"),
     INVALID_MAIL_FORMAT("user_api_002", "Bad Request"),
-    INVALID_PASSWORD_FORMAT("user_api_003", "Bad Request");
+    INVALID_PASSWORD_FORMAT("user_api_003", "Bad Request"),
+    EMAIL_EXISTS("user_api_004", "Bad Request");
 
     private final String code;
     private final String description;
